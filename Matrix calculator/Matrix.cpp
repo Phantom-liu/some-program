@@ -1,5 +1,5 @@
 #include "Matrix.h"
-
+#include<string>
 
 Matrix::Matrix() :row(row), col(col), setB(false), solution(0) {}
 
@@ -41,13 +41,15 @@ void Matrix::clear() {
 
 void Matrix::initStatus() {
 	cout << "行简化过程：" << endl;
-	int coltmp = setB ? col + 1: col;
+	int coltmp = setB ? col + 1 : col;
 	int curRow = 1;
 	for (int i = 1; i <= row; i++) {
 		for (int j = 1; j <= coltmp; j++) {
 			rowSimplest[i][j].numerator = origin[i][j].numerator;
 		}
 	}
+	cout << "Step#0" << ": " << endl;
+	print(rowSimplest, row, coltmp);
 	for (int j = 1; j <= col&&curRow <= row; j++) {
 		if (rowSimplest[curRow][j].numerator == 0) {
 			bool allZero = true;
@@ -119,6 +121,13 @@ int Matrix::getInversion() {
 	}
 	int coltmp = col << 1;
 	int curRow = 1;
+	cout << "Step#0" << ": " << endl;
+	for (int i = 1; i <= row; i++) {
+		for (int k = 1; k <= coltmp; k++) {
+			cout << helpM[i][k] << "\t";
+		}
+		cout << endl;
+	}
 	for (int j = 1; j <= col && curRow <= row; j++) {
 		if (helpM[curRow][j].numerator == 0) {
 			bool allZero = true;
@@ -172,6 +181,134 @@ int Matrix::getInversion() {
 		}
 	}
 	return 1;
+}
+
+void Matrix::printSolution() {
+	if (solution == -1) {
+		cout << "该方程组无解" << endl;
+	}
+	else if (solution == 1) {
+		cout << "该方程组有无穷组解，可表示为" << endl;
+		string ans[MAXSIZE];
+		int ansSet[MAXSIZE] = { 0 };
+		for (int i = row; i >= 1; i--) {
+			int j;
+			for (j = i; j <=col; j++) {
+				if (rowSimplest[i][j].numerator == 1)
+					break;
+			}
+			ansSet[j] = 1;
+			for (int k = j + 1; k <= col; k++) {
+				if (rowSimplest[i][k].numerator != 0) {
+					if (rowSimplest[i][k].denominator != 1) {
+						ans[j] += "(" + to_string(-rowSimplest[i][k].numerator) + "/"
+							+ to_string(rowSimplest[i][k].denominator)
+							+ "x" + to_string(k) + ")+";
+					}
+					else if(abs(rowSimplest[i][k].numerator) != 1){
+						ans[j] += "(" + to_string(-rowSimplest[i][k].numerator) 
+							+ "x" + to_string(k) + ")+";
+					}
+					else {
+						if (rowSimplest[i][k].numerator == 1)
+							ans[j] += "(-x" + to_string(k) + ")+";
+						else
+							ans[j] += "(x" + to_string(k) + ")+";
+					}
+				}
+			}
+			//最右边一列
+			if (rowSimplest[i][col + 1].numerator != 0) {
+				if (rowSimplest[i][col + 1].denominator != 1) {
+					ans[j] += to_string(rowSimplest[i][col + 1].numerator) + "/"
+						+ to_string(rowSimplest[i][col + 1].denominator);
+				}
+				else {
+					ans[j] += to_string(rowSimplest[i][col + 1].numerator);
+				}
+			}
+			else {
+				if (!ans[j].empty() && ans[j][ans[j].length() - 1] == '+') {
+					ans[j][ans[j].length() - 1] = '\0';
+				}
+			}
+		}
+		for (int i = 1; i <= col; i++) {
+			if (ans[i].empty() && ansSet[i] == 0)
+				cout << "x" << i << ": " << "(x" << i << ")" << endl;
+			else {
+				cout << "x" << i << ": ";
+				if (ans[i].empty())
+					cout << " " << 0 << endl;
+				else
+					cout << ans[i] << endl;
+			}
+		}
+		cout << "自由未知量：";
+		int cnt = 0;
+		int freePos[MAXSIZE] = { 0 };
+		for (int i = 1; i <= col; i++) {
+			if (!ansSet[i]) {
+				freePos[++cnt] = i;
+				cout << "x" << i << " ";
+			}
+		}
+		cout << endl;
+		bool isnStar = false;
+		for (int i = 1; i <= row; i++) {
+			if (rowSimplest[i][col + 1].numerator != 0) {
+				isnStar = true;
+				break;
+			}
+		}
+		num nStar[MAXSIZE];		//特解
+		for (int i = 1; i <= row; i++)nStar[i] = rowSimplest[i][col + 1];
+		num n[MAXSIZE][MAXSIZE];		//n[i]为第i个解向量
+		for (int i = 1; i <= cnt; i++) {
+			int valid = freePos[i];
+			int curCol = 1;
+			for (int j = 1; j <= col; j++) {
+				//如果x(j)本身是自由未知量
+				if (ansSet[j] == 0) {
+					if (j == valid)
+						n[i][j] = 1;
+					else
+						n[i][j] = 0;
+					continue;
+				}
+				n[i][j] = rowSimplest[curCol][valid].opposite();
+				curCol++;
+			}
+		}
+		cout << "基础解系为：";
+		if (isnStar) {
+			cout << "(n*)+";
+		}
+		for (int i = 1; i < cnt; i++) {
+			cout << "k" << i << "(n" << i << ")+";
+		}
+		cout << "k" << cnt << "(n" << cnt << ")" << endl;
+		if (isnStar) {
+			cout << "n*" << ": (";
+			for (int j = 1; j <= col; j++) {
+				cout << nStar[j] << ",";
+			}
+			cout << ")" << endl;
+		}
+		for (int i = 1; i <= cnt; i++) {
+			cout << "n" << i << ": (";
+			for (int j = 1; j < col; j++) {
+				cout << n[i][j] << ",";
+			}
+			cout << n[i][col] << ")" << endl;
+		}
+	}
+	else {
+		cout << "唯一解为：" << endl;
+		for (int i = 1; i <= row; i++) {
+			cout << "x" << i << " :\t" << rowSimplest[i][col + 1] << endl;
+		}
+	}
 }
 
 void Matrix::printOrigin() {

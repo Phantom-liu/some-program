@@ -7,13 +7,14 @@ class Matrix {
 public:
 	Matrix();
 	void init(int a[][MAXSIZE], int row, int col);
-	void initB(int b[]);
+	void initB(int b[]);		//AX=B的列向量B
 	void initStatus();
 	void clear();
 	int getInversion();
 	void printOrigin();
 	void printSimplest();
 	void printStandard();
+	void printSolution();
 	void printInversion();
 	void printRank();
 	void print(num a[][MAXSIZE], int row_size, int col_size);
