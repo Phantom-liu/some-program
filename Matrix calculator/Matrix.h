@@ -3,9 +3,9 @@
 #include "num.h"
 using namespace std;
 const int MAXSIZE = 10;
-class Matrixs {
+class Matrix {
 public:
-	Matrixs();
+	Matrix();
 	void init(int a[][MAXSIZE], int row, int col);
 	void initB(int b[]);
 	void initStatus();

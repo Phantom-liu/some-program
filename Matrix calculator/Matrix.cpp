@@ -1,9 +1,9 @@
-#include "Matrixs.h"
+#include "Matrix.h"
 
 
-Matrixs::Matrixs() :row(row), col(col), setB(false), solution(0) {}
+Matrix::Matrix() :row(row), col(col), setB(false), solution(0) {}
 
-void Matrixs::init(int a[][MAXSIZE], int row, int col)
+void Matrix::init(int a[][MAXSIZE], int row, int col)
 {
 	this->row = row;
 	this->col = col;
@@ -14,13 +14,13 @@ void Matrixs::init(int a[][MAXSIZE], int row, int col)
 	}
 }
 
-void Matrixs::initB(int b[]) {
+void Matrix::initB(int b[]) {
 	for (int i = 1; i <= row; i++)
 		origin[i][col + 1].numerator = b[i];
 	setB = true;
 }
 
-void Matrixs::clear() {
+void Matrix::clear() {
 	row = 0;
 	col = 0;
 	setB = false;
@@ -39,7 +39,7 @@ void Matrixs::clear() {
 	}
 }
 
-void Matrixs::initStatus() {
+void Matrix::initStatus() {
 	cout << "行简化过程：" << endl;
 	int coltmp = setB ? col + 1: col;
 	int curRow = 1;
@@ -90,7 +90,6 @@ void Matrixs::initStatus() {
 	}
 	rank = curRow - 1;
 	if (setB) {
-		int Brow;
 		//判断增广矩阵的秩
 		for (int i = curRow; i <= row; i++) {
 			if (rowSimplest[i][col + 1].numerator != 0)
@@ -106,7 +105,7 @@ void Matrixs::initStatus() {
 }
 
 
-int Matrixs::getInversion() {
+int Matrix::getInversion() {
 	if (rank < row || rank < col) {
 		return -1;
 	}
@@ -175,27 +174,27 @@ int Matrixs::getInversion() {
 	return 1;
 }
 
-void Matrixs::printOrigin() {
+void Matrix::printOrigin() {
 	cout << "原矩阵：" << endl;
 	print(origin, row, col);
 }
-void Matrixs::printSimplest() {
+void Matrix::printSimplest() {
 	cout << "行最简矩阵：" << endl;
 	print(rowSimplest, row, col);
 }
-void Matrixs::printStandard() {
+void Matrix::printStandard() {
 	cout << "标准型：" << endl;
 	print(standard, row, col);
 }
-void Matrixs::printInversion() {
+void Matrix::printInversion() {
 	cout << "逆矩阵为：" << endl;
 	print(inversion, row, col);
 }
-void Matrixs::printRank() {
+void Matrix::printRank() {
 	cout << "矩阵的秩为：" << rank << endl;
 }
 
-void Matrixs::print(num a[][MAXSIZE], int row_size, int col_size) {
+void Matrix::print(num a[][MAXSIZE], int row_size, int col_size) {
 	for (int i = 1; i <= row_size; i++) {
 		for (int j = 1; j <= col_size; j++) {
 			cout << a[i][j] << "\t";

@@ -1,12 +1,12 @@
 ﻿#include<iostream>
 using namespace std;
-#include "Matrixs.h"
+#include "Matrix.h"
 void showMenu() {
 	cout << "欢迎使用矩阵计算器，输入0 - 9继续：\n" << endl;
 	cout << "  ---------------------- " << endl;
 	cout << " | 1.输入(更新)矩阵\t|" << endl;
 	cout << " | 2.输入(更新)列向量b\t|" << endl;
-	cout <<	" | 3.打印行最简矩阵\t|" << endl;
+	cout << " | 3.打印行最简矩阵\t|" << endl;
 	cout << " | 4.打印行标准型矩阵\t|" << endl;
 	cout << " | 5.打印原矩阵\t\t|" << endl;
 	cout << " | 6.打印矩阵的秩\t|" << endl;
@@ -18,7 +18,7 @@ void showMenu() {
 	cout << "  ---------------------- " << endl;
 }
 /*
-1 
+1
 4 5
 2 1 8 3 7
 2 -3 0 7 -5
@@ -30,7 +30,7 @@ int main()
 	showMenu();
 	int n, row, col, tmp;
 	int a[MAXSIZE][MAXSIZE];
-	Matrixs m;
+	Matrix m;
 	while (cin >> n && n != 'q') {
 		cout << "Instruction_Start______________________________________" << endl;
 		switch (n) {
@@ -67,7 +67,7 @@ int main()
 				m.printInversion();
 			break;
 		case 8:
-			system("cls"); 
+			system("cls");
 			showMenu();
 			break;
 		case 9:showMenu(); break;
@@ -77,5 +77,5 @@ int main()
 		cout << "________________________________________Instruction_End\n\n" << endl;
 	}
 	cout << "再见！" << endl;
-	return 0;
+	return 0;;
 }
