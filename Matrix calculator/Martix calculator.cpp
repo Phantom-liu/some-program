@@ -1,6 +1,11 @@
 ﻿#include<iostream>
 using namespace std;
 #include "Matrix.h"
+
+Matrix m;
+int a[MAXSIZE][MAXSIZE];
+int n, row, col, tmp;
+
 void showMenu() {
 	cout << "欢迎使用矩阵计算器，输入0 - 9继续\n注：矩阵(和列向量)输入完成后使用命令0初始化\n" << endl;
 	cout << "  ---------------------- " << endl;
@@ -20,9 +25,6 @@ void showMenu() {
 int main()
 {
 	showMenu();
-	int n, row, col, tmp;
-	int a[MAXSIZE][MAXSIZE];
-	Matrix m;
 	while (cin >> n && n != 'q') {
 		cout << "Instruction_Start______________________________________\n" << endl;
 		switch (n) {
@@ -69,7 +71,7 @@ int main()
 		cout << "\n________________________________________Instruction_End\n\n" << endl;
 	}
 	cout << "再见！" << endl;
-	return 0;;
+	return 0;
 }
 /*
 1
