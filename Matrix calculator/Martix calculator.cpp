@@ -27,6 +27,13 @@ int main()
 	showMenu();
 	while (cin >> n && n != 'q') {
 		cout << "Instruction_Start______________________________________\n" << endl;
+		if (3 <= n && n <= 7) {
+			if (m.getRank() == -1) {
+				cout << "请先使用命令0更新状态！" << endl;
+				cout << "\n________________________________________Instruction_End\n\n" << endl;
+				continue;
+			}
+		}
 		switch (n) {
 		case 1:
 			m.clear();
@@ -52,7 +59,9 @@ int main()
 		case 3:m.printSimplest(); break;
 		case 4:m.printStandard(); break;
 		case 5:m.printSolution(); break;
-		case 6:m.printRank(); break;
+		case 6:
+			cout << "矩阵的秩为：" << m.getRank() << endl;
+			break;
 		case 7:
 			tmp = m.getInversion();
 			if (tmp == -1)

@@ -11,12 +11,12 @@ public:
 	void initStatus();
 	void clear();
 	int getInversion();
+	int getRank();
 	void printOrigin();
 	void printSimplest();
 	void printStandard();
 	void printSolution();
 	void printInversion();
-	void printRank();
 	void print(num a[][MAXSIZE], int row_size, int col_size);
 private:
 	num	origin[MAXSIZE][MAXSIZE];

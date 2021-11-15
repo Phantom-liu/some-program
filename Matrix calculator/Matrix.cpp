@@ -1,7 +1,7 @@
 #include "Matrix.h"
 #include<string>
 
-Matrix::Matrix() :row(row), col(col), setB(false), solution(0) {}
+Matrix::Matrix() :row(0), col(0), rank(-1), setB(false), solution(-2) {}
 
 void Matrix::init(int a[][MAXSIZE], int row, int col)
 {
@@ -23,10 +23,11 @@ void Matrix::initB(int b[]) {
 void Matrix::clear() {
 	row = 0;
 	col = 0;
+	rank = -1;
+	solution = -2;
 	setB = false;
-	solution = 0;
-	for (int i = 1; i <= MAXSIZE; i++) {
-		for (int j = 1; j <= MAXSIZE; j++) {
+	for (int i = 1; i < MAXSIZE; i++) {
+		for (int j = 1; j < MAXSIZE; j++) {
 			origin[i][j].numerator = 0;
 			origin[i][j].denominator = 1;
 			rowSimplest[i][j].numerator = 0;
@@ -183,7 +184,15 @@ int Matrix::getInversion() {
 	return 1;
 }
 
+int Matrix::getRank() {
+	return rank;
+}
+
 void Matrix::printSolution() {
+	if (solution == -2) {
+		cout << "请输入列向量b并更新状态！" << endl;
+		return;
+	}
 	if (solution == -1) {
 		cout << "该方程组无解" << endl;
 	}
@@ -327,9 +336,7 @@ void Matrix::printInversion() {
 	cout << "逆矩阵为：" << endl;
 	print(inversion, row, col);
 }
-void Matrix::printRank() {
-	cout << "矩阵的秩为：" << rank << endl;
-}
+
 
 void Matrix::print(num a[][MAXSIZE], int row_size, int col_size) {
 	for (int i = 1; i <= row_size; i++) {
