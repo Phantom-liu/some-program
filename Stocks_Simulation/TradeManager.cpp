@@ -1,11 +1,14 @@
 #include "TradeManager.h"
 
 TradeEntry::TradeEntry() {
+	name = "undefined";
+	brief = "undefined";
 	money = 20000;
 	iniMoney = 20000;
 	yieldRate = 0;
 	moneyThisTime = 20000;
 	rateThisTime = 0;
+	fileName = "undefined.txt";
 }
 
 TradeEntry::TradeEntry(string name, string brief, double iniMoney) {
@@ -33,12 +36,17 @@ void TradeEntry::addEntry(string stock, double rate, double positions = -1) {
 	UPDATE_THISTIME_RATE();
 	SYSTEMTIME t;
 	GetLocalTime(&t);
-	rec.date = to_string(t.wYear) + "-" + to_string(t.wMonth) + "-" + to_string(t.wDay);
+	rec.date = to_string(t.wYear) + "." + to_string(t.wMonth) + "." + to_string(t.wDay);
 	rec.time = to_string(t.wHour) + ":" + to_string(t.wMinute);
 	recordList.push_back(rec);
 }
 
 void TradeEntry::deleteEntry() {
+	if (recordList.size() == 0) {
+		cout << "当前无记录！" << endl;
+		throw 1;
+		return;
+	}
 	money -= recordList.back().profit;
 	UPDATE_YIELDRATE();
 	UPDATE_THISTIME_RATE();
@@ -47,12 +55,12 @@ void TradeEntry::deleteEntry() {
 
 void TradeEntry::readFile(string filename) {
 	/*
-	名称：
-	简述：
+	名称: 
+	简述: 
 
-	资金：
-	盈利率：
-	初始资金：
+	资金: 
+	盈利率: 
+	初始资金: 
 
 	东方证券		20000		+3.6		+720		2021-12-12	17:31
 	三一重工		10000		-3.7		-370		2021-12-12	18:00
@@ -60,14 +68,19 @@ void TradeEntry::readFile(string filename) {
 
 	*/
 	fstream preTrade(filename, ios::in);
+	if (!preTrade.is_open()) {
+		return;
+	}
 	string tmp;
 	preTrade >> tmp >> name;
 	preTrade >> tmp;
 	getline(preTrade, tmp);
+	brief = "";
 	//多行简述
 	do {
 		getline(preTrade, tmp);
 		brief += tmp;
+		brief += "\n";
 	} while (!tmp.empty());
 
 	preTrade >> tmp >> money;
@@ -92,15 +105,15 @@ void TradeEntry::readFile(string filename) {
 
 void TradeEntry::writeBack() {
 	/*
-	名称：
-	简述：
+	名称: 
+	简述: 
 
-	资金：
-	盈利率：
-	初始资金：
+	资金: 
+	盈利率: 
+	初始资金: 
 
-	东方证券		20000		+3.6		+720		2021-12-12	17:31
-	三一重工		10000		-3.7		-370		2021-12-12	18:00
+	东方证券2021.6.17-2021.9.20		20000		+3.6		+720		2021-12-12	17:31
+	三一重工2012.7.28-2013.9.13		10000		-3.7		-370		2021-12-12	18:00
 	...
 
 	*/
@@ -111,25 +124,23 @@ void TradeEntry::writeBack() {
 		<< "盈利率: " << yieldRate << endl
 		<< "初始资金: " << iniMoney << endl << endl;
 	for (auto rec : recordList) {
-		output << rec.stock;
-		char stmp[100];
+		output << setw(32) << left << rec.stock; 
+		/*char stmp[100];
 		sprintf(stmp,"\t%9.1f\t%+9.1f\t%+9.1f\t", rec.positions, rec.rate, rec.profit);
-		output << stmp;
+		output << stmp;*/
+		output << "\t\t" << fixed << setprecision(2) << rec.rate;
+		output << "\t\t" << fixed << setprecision(2) << rec.profit << "\t\t";
 		output << rec.date << " " << rec.time << endl;
 	}
 	output.close();
 }
 
-void TradeEntry::printBrief() {
-	cout << "方式简述" << endl;
-	cout << brief << endl;
-}
-
 void TradeEntry::printInfo() {
-	cout << "资金：" << money << endl
-		<< "此次总盈利：" << money - moneyThisTime << endl
-		<< "盈利率" << rateThisTime << endl;
-	cout << endl;
+	cout << "名称: " << name << endl
+		<< "简述: \n" << brief << endl << endl
+		<< "资金: " << money << endl
+		<< "盈利率: " << yieldRate << endl
+		<< "初始资金: " << iniMoney << endl << endl;
 }
 
 void TradeEntry::printList() {
@@ -138,22 +149,117 @@ void TradeEntry::printList() {
 		<< "资金: " << money << endl
 		<< "盈利率: " << yieldRate << endl
 		<< "初始资金: " << iniMoney << endl << endl;
-	cout << "股票\t  仓位\t\t     盈利率\t    盈利\t日期" << endl;
+	cout << "股票\t\t\t\t\t仓位\t\t\t盈利率\t\t盈利\t\t\t日期" << endl;
 	for (auto rec : recordList) {
-		cout << rec.stock;
-		printf("\t%9.1f\t%+9.2f\t%+9.1f\t", rec.positions, rec.rate, rec.profit);
+		cout << setw(32) << left << rec.stock;
+		cout << "\t" << fixed << left << setw(12) << setprecision(2) << rec.positions;
+		if (rec.profit > 0) {
+			SET_FORE_RED();
+			cout << "\t\t+" << fixed << setprecision(2) << rec.rate;
+			cout << "\t\t+" << fixed << setprecision(2) << rec.profit << "\t\t";
+			SET_FORE_WHITE();
+		}
+		else if (rec.profit < 0) {
+			SET_FORE_GREEN();
+			cout << "\t\t" << fixed << setprecision(2) << rec.rate;
+			cout << "\t\t" << fixed << setprecision(2) << rec.profit << "\t\t";
+			SET_FORE_WHITE();
+		}
+		else {
+			cout << "\t\t" << fixed << setprecision(2) << rec.rate;
+			cout << "\t\t" << fixed << setprecision(2) << rec.profit << "\t\t";
+		}
 		cout << rec.date << " " << rec.time << endl;
 	}
+	cout << endl;
 }
 
 void TradeEntry::printResThisTime() {
-	printf("本次盈亏: %+.1f\n盈利率: %.2f\n\n", money - moneyThisTime, rateThisTime);
+	if (money > moneyThisTime) {
+		cout << "资金余额: " << money << endl
+			<< "本次总盈利: ";
+		SET_FORE_RED();
+		cout << "+" << fixed << left << setprecision(2) << money - moneyThisTime << endl;
+		SET_FORE_WHITE();
+		cout << "盈利率:     ";
+		SET_FORE_RED();
+		cout << "+" << fixed << left << setprecision(2) << rateThisTime << endl;
+		SET_FORE_WHITE();
+	}
+	else if (money < moneyThisTime) {
+		cout << "资金余额:   " << money << endl
+			<< "本次总盈利: ";
+		SET_FORE_GREEN();
+		cout << fixed << left << setprecision(2) << money - moneyThisTime << endl;
+		SET_FORE_WHITE();
+		cout << "盈利率:     ";
+		SET_FORE_GREEN();
+		cout << fixed << left << setprecision(2) << rateThisTime << endl;
+		SET_FORE_WHITE();
+	}
+	else {
+		cout << "资金余额:   " << money << endl << "本次总盈利: " << fixed << left << setprecision(2) << money - moneyThisTime << endl;
+		cout << "盈利率:     " << fixed << left << setprecision(2) << rateThisTime << endl;
+	}
+	cout << endl;
 }
 
-void TradeEntry::sortByRate(){}
-void TradeEntry::sortByProfit(){}
-void TradeEntry::sortByTime(){}
- 
+void TradeEntry::sortByRate(int upOrDown) {
+	if (upOrDown > 0) {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+				return r1.rate < r2.rate;
+			}
+		);
+	}
+	else {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+				return r1.rate > r2.rate;
+			}
+		);
+	}
+}
+
+void TradeEntry::sortByProfit(int upOrDown){
+	if (upOrDown > 0) {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+				return r1.profit < r2.profit;
+			}
+		);
+	}
+	else {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+				return r1.profit > r2.profit;
+			}
+		);
+	}
+}
+
+void TradeEntry::sortByTime(int upOrDown){
+	if (upOrDown > 0) {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+			if (r1.date != r2.date)
+				return r1.date < r2.date;
+			else
+				return r1.time < r2.time;
+		}
+		);
+	}
+	else {
+		sort(recordList.begin(), recordList.end(),
+			[](RecordEntry r1, RecordEntry r2) {
+			if (r1.date != r2.date)
+				return r1.date > r2.date;
+			else
+				return r1.time > r2.time;
+		}
+		);
+	}
+}
 
 void TradeManager::iniList() {
 	fstream nameList("nameList.txt", ios::in);
@@ -220,7 +326,7 @@ TradeEntry* TradeManager::getTrade(string name){
 
 void TradeManager::showList(){
 	int cnt = 1;
-	cout << "交易列表：" << endl;
+	cout << "交易列表: " << endl;
 	for (auto s : tradeList) {
 		cout << cnt++ << ". " << s << endl;
 	}
@@ -228,7 +334,7 @@ void TradeManager::showList(){
 }
 
 void TradeManager::updateList() {
-	fstream nameList("nameList.txt", ios::out);
+	fstream nameList("nameList.txt", ios::trunc | ios::out);
 	for (auto trade : m) {
 		trade.second->writeBack();
 		nameList << trade.second->fileName << endl;

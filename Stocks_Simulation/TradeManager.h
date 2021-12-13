@@ -9,9 +9,17 @@
 #include <algorithm>
 #include <windows.h>
 #include <map>
+#include <iomanip>
 
 #define UPDATE_YIELDRATE() (yieldRate = (money - iniMoney) / iniMoney * 100)
 #define UPDATE_THISTIME_RATE() (rateThisTime = (money - moneyThisTime) / moneyThisTime * 100)
+#define SET_FORE_RED() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED)
+#define SET_FORE_GREEN() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_GREEN)
+#define SET_FORE_BLUE() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE)
+#define SET_BACK_BLUE() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_BLUE)
+#define SET_BACK_GREEN() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), BACKGROUND_GREEN)
+#define SET_FORE_WHITE() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN)
+#define SET_FORE_BRIWHITE() SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_GREEN)
 using namespace std;
 
 
@@ -44,13 +52,12 @@ public:
 	void deleteEntry();		//删除上一次操作(记录有误)
 	void readFile(string filename);	//从文件读入内存
 	void writeBack();		//写回文件(.txt)
-	void printBrief();		
 	void printInfo();		
 	void printList();		//打印所有操作记录
 	void printResThisTime();//打印操作战果(自本次启动)
-	void sortByRate();		//将每次操作按盈利率排序
-	void sortByProfit();	//按盈利大小排序
-	void sortByTime();		//按操作时间排序（本地时间）
+	void sortByRate(int upOrDown);		//将每次操作按盈利率排序 1升 -1降
+	void sortByProfit(int upOrDown);	//按盈利大小排序 1升 -1降
+	void sortByTime(int upOrDown);		//按操作时间排序（本地时间） 1升 -1降
 };
 
 
@@ -67,5 +74,10 @@ public:
 	TradeEntry* getTrade(string name);
 	void showList();
 	void updateList();
+	~TradeManager() {
+		for (auto trade : m) {
+			delete trade.second;
+		}
+	}
 };
 
