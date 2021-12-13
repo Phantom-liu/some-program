@@ -4,7 +4,7 @@ using namespace std;
 
 Matrix m;
 int a[MAXSIZE][MAXSIZE];
-int n, row, col, tmp;
+int row, col, tmp;
 
 void showMenu() {
 	cout << "欢迎使用矩阵计算器，输入0 - 9继续\n注：矩阵(和列向量)输入完成后使用命令0初始化\n" << endl;
@@ -25,17 +25,18 @@ void showMenu() {
 int main()
 {
 	showMenu();
-	while (cin >> n && n != 'q') {
+	char c;
+	while (cin >> c && c != 'q') {
 		cout << "Instruction_Start______________________________________\n" << endl;
-		if (3 <= n && n <= 7) {
+		if ('3' <= c && c <= '7') {
 			if (m.getRank() == -1) {
 				cout << "请先使用命令0更新状态！" << endl;
 				cout << "\n________________________________________Instruction_End\n\n" << endl;
 				continue;
 			}
 		}
-		switch (n) {
-		case 1:
+		switch (c) {
+		case '1':
 			m.clear();
 			cout << "输入矩阵的行数和列数" << endl;
 			cin >> row >> col;
@@ -48,7 +49,7 @@ int main()
 			m.init(a, row, col);
 			cout << "输入完成！" << endl;
 			break;
-		case 2:
+		case '2':
 			cout << "请输入列向量" << endl;
 			int b[MAXSIZE];
 			for (int i = 1; i <= row; i++)
@@ -56,25 +57,25 @@ int main()
 			m.initB(b);
 			cout << "输入完成！" << endl;
 			break;
-		case 3:m.printSimplest(); break;
-		case 4:m.printStandard(); break;
-		case 5:m.printSolution(); break;
-		case 6:
+		case '3':m.printSimplest(); break;
+		case '4':m.printStandard(); break;
+		case '5':m.printSolution(); break;
+		case '6':
 			cout << "矩阵的秩为：" << m.getRank() << endl;
 			break;
-		case 7:
+		case '7':
 			tmp = m.getInversion();
 			if (tmp == -1)
 				cout << "该矩阵不可逆！" << endl;
 			else
 				m.printInversion();
 			break;
-		case 8:
+		case '8':
 			system("cls");
 			showMenu();
 			break;
-		case 9:showMenu(); break;
-		case 0:m.initStatus(); break;
+		case '9':showMenu(); break;
+		case '0':m.initStatus(); break;
 		default:cout << "输入有误！请重新输入指令" << endl;
 		}
 		cout << "\n________________________________________Instruction_End\n\n" << endl;
