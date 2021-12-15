@@ -125,6 +125,7 @@ void TradeEntry::writeBack() {
 		<< "³õÊ¼×Ê½ð: " << iniMoney << endl << endl;
 	for (auto rec : recordList) {
 		output << setw(32) << left << rec.stock; 
+		output << "\t" << fixed << left << setw(12) << setprecision(2) << rec.positions;
 		/*char stmp[100];
 		sprintf(stmp,"\t%9.1f\t%+9.1f\t%+9.1f\t", rec.positions, rec.rate, rec.profit);
 		output << stmp;*/

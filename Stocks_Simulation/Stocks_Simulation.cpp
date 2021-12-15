@@ -112,7 +112,7 @@ void getInTheTrade() {
 		cout << "Trade_Operation_Start------------------------------------------------------------------------------------\n" << endl;
 		SET_FORE_WHITE();
 		switch (tmp) {
-		case '1':	{
+		case '1': {
 			cout << "请输入股票名称、清仓盈利率、仓位(RMB)" << endl;
 			string stock;
 			double rate, positions;
@@ -121,10 +121,10 @@ void getInTheTrade() {
 				cout << "输入有误！" << endl;
 				break;
 			}
-			trade->addEntry(stock, rate, positions);
 			if (positions == -1)
 				positions = trade->money;
-			double changes = positions * rate;
+			trade->addEntry(stock, rate, positions);
+			double changes = positions * rate / 100;
 			cout << "盈亏: ";
 			if (rate > 0) {
 				SET_FORE_RED();
@@ -141,7 +141,7 @@ void getInTheTrade() {
 			}
 			cout << "余额: " << trade->money << endl;
 			break;
-			}
+		}
 		case '2':
 			try {
 				trade->deleteEntry();
@@ -157,7 +157,7 @@ void getInTheTrade() {
 		case '4':
 			trade->printList();
 			break;
-		case '5': 
+		case '5':
 			recordSortInTrade(trade);
 			break;
 		case'm':
